@@ -61,7 +61,7 @@ jobs:
     runs-on: 'digital-ocean'
     needs:
       - check-convention
-      - laravel-tests
+      - unit-tests
     steps:
       - name: Run test coverage
         run: composer run-script test:coverage
