@@ -1,0 +1,44 @@
+{
+  "name": "minhducck/key-value-data-storage",
+  "version": "0.0.1",
+  "description": "A module that enables API to write/retrieve object based on key-value methodology.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Minhducck\\KeyValueDataStorage\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Minhducck\\KeyValueDataStorage\\Test\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Ta Minh Duc",
+      "email": "minhducck@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^8.1",
+    "laravel/framework": "^10.0"
+  },
+  "require-dev": {
+    "illuminate/support": "10.x-dev",
+    "laravel/pint": "dev-main",
+    "nunomaduro/larastan": "2.x-dev",
+    "orchestra/testbench": "8.x-dev",
+    "pestphp/pest": "2.x-dev",
+    "phpstan/phpstan": "1.11.x-dev"
+  },
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
