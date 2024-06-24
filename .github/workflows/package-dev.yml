@@ -1,0 +1,67 @@
+name: CI for Laravel Package
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "*" ]
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  pull-code-and-install-deps:
+    name: "Pull code and install deps"
+    runs-on: 'digital-ocean'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy .env files
+        run: |
+          cp /home/runner/envs/.env.ci ./.env.testing;
+          cp /home/runner/envs/.env.ci ./.env;
+
+      - name: Replace phpunit config
+        run: |
+          cp /home/runner/envs/phpunits/phpunit-package.xml phpunit.xml
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+  check-convention:
+    name: 'Checking coding convention'
+    runs-on: 'digital-ocean'
+    needs:
+      - pull-code-and-install-deps
+
+    steps:
+      - name: "Check code convention"
+        run: composer run-script check:convention
+
+  unit-tests:
+    name: "Run PHP Unit Test"
+    runs-on: 'digital-ocean'
+    needs:
+      - pull-code-and-install-deps
+
+    steps:
+      - name: Drop db if exist
+        run: mysqladmin -h127.0.0.1 -u${{ secrets.CI_MYSQL_USER }} --password="${{ secrets.CI_MYSQL_PASSWORD }}" -f drop ${{ vars.CI_MYSQL_DB_NAME }} || true
+
+      - name: Create Database
+        run: mysqladmin -h127.0.0.1 -u${{ secrets.CI_MYSQL_USER }} --password="${{ secrets.CI_MYSQL_PASSWORD }}" create ${{ vars.CI_MYSQL_DB_NAME }}
+
+      - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
+        run: composer run-script test
+
+  code-coverage:
+    name: 'Check code coverage'
+    runs-on: 'digital-ocean'
+    needs:
+      - check-convention
+      - laravel-tests
+    steps:
+      - name: Run test coverage
+        run: composer run-script test:coverage
