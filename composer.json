@@ -4,6 +4,11 @@
   "description": "A module that enables API to write/retrieve object based on key-value methodology.",
   "type": "library",
   "license": "MIT",
+  "scripts": {
+    "check:convension": "./vendor/bin/phpstan",
+    "test": "./vendor/bin/pest",
+    "test:coverage": "XDEBUG_MODE=coverage  ./vendor/bin/pest --coverage --min=65"
+  },
   "autoload": {
     "psr-4": {
       "Minhducck\\KeyValueDataStorage\\": "src/"
@@ -20,7 +25,7 @@
       "email": "minhducck@gmail.com"
     }
   ],
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "require": {
     "php": "^8.1",
     "laravel/framework": "^10.0"
