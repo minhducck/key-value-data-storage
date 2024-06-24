@@ -5,7 +5,7 @@
   "type": "library",
   "license": "MIT",
   "scripts": {
-    "check:convension": "./vendor/bin/phpstan",
+    "check:convention": "./vendor/bin/phpstan",
     "test": "./vendor/bin/pest",
     "test:coverage": "XDEBUG_MODE=coverage  ./vendor/bin/pest --coverage --min=65"
   },
