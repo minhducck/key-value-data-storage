@@ -1,0 +1,56 @@
+name: Release package
+
+on:
+  push:
+    tags:
+      - "v*"
+permissions:
+  contents: write
+
+jobs:
+  pull-code-and-install-deps:
+    name: "Pull code and install deps"
+    runs-on: 'digital-ocean'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy .env files
+        run: |
+          cp /home/runner/envs/.env.ci ./.env.testing;
+          cp /home/runner/envs/.env.ci ./.env;
+
+      - name: Replace phpunit config
+        run: |
+          cp /home/runner/envs/phpunits/phpunit-package.xml phpunit.xml
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+  code-coverage:
+    name: 'Check code coverage'
+    runs-on: 'digital-ocean'
+    needs:
+      - pull-code-and-install-deps
+    steps:
+      - name: Drop db if exist
+        run: mysqladmin -h127.0.0.1 -u${{ secrets.CI_MYSQL_USER }} --password="${{ secrets.CI_MYSQL_PASSWORD }}" -f drop ${{ vars.CI_MYSQL_DB_NAME }} || true
+
+      - name: Create Database
+        run: mysqladmin -h127.0.0.1 -u${{ secrets.CI_MYSQL_USER }} --password="${{ secrets.CI_MYSQL_PASSWORD }}" create ${{ vars.CI_MYSQL_DB_NAME }}
+
+      - name: Run test coverage
+        run: ./vendor/bin/pest --coverage-text='./coverage-report.log'
+
+  release-new-version:
+    name: "Generate release"
+    runs-on: 'digital-ocean'
+    needs:
+      - code-coverage
+    steps:
+      - name: 'release'
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          files: |
+            coverage-report.log
