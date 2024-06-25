@@ -40,13 +40,14 @@ final class KeyValueDataObjectServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->loadMigrationsFrom($this->resolvePath(['..', 'database', 'migrations']));
+
         if (!env('KEY_VALUE_STORAGE.ENABLE', 0)) {
             $this->singletons = [];
             $this->bindings   = [];
             return;
         }
 
-        $this->loadMigrationsFrom($this->resolvePath(['..', 'database', 'migrations']));
         $this->loadRoutesFrom($this->resolvePath(['..', 'routes', 'api.php']));
     }
 }
