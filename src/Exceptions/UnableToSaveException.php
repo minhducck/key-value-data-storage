@@ -2,9 +2,11 @@
 
 namespace Minhducck\KeyValueDataStorage\Exceptions;
 
-class UnableToSaveException extends \Exception
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+
+class UnableToSaveException extends ConflictHttpException
 {
-    /** @var string  */
+    /** @var string */
     protected $message = 'Unable to save key-values.';
 
     /** @var int */

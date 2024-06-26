@@ -80,7 +80,7 @@ class KeyValueControllerTest extends TestCase
         $response = $this->postJson(
             '/object',
             $data,
-            ['accepts' => 'application/json']
+            ['accepts' => 'application/json', 'content-type' => 'application/json']
         );
 
         $response->assertJsonIsObject();

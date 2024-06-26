@@ -2,11 +2,13 @@
 
 namespace Minhducck\KeyValueDataStorage\Exceptions;
 
-class InvalidInputException extends \Exception
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+class InvalidInputException extends BadRequestHttpException
 {
     /** @var string  */
-    protected $message = 'Unable to save key-values.';
+    protected $message = 'Please verify your input.';
 
     /** @var int  */
-    protected $code = 409;
+    protected $code = 400;
 }
