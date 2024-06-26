@@ -7,7 +7,7 @@
   "scripts": {
     "check:convention": "./vendor/bin/phpstan && ./vendor/bin/pint --test",
     "test": "./vendor/bin/pest",
-    "test:coverage": "XDEBUG_MODE=coverage  ./vendor/bin/pest --coverage-clover=clover.xml --coverage --min=65"
+    "test:coverage": "XDEBUG_MODE=coverage  ./vendor/bin/pest --coverage-clover=clover.xml --coverage-html=output --coverage --min=65"
   },
   "autoload": {
     "psr-4": {

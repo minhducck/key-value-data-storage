@@ -2,6 +2,7 @@
 
 ![CI Badge](https://github.com/minhducck/key-value-data-storage/actions/workflows/package-dev.yml/badge.svg?branch=main)
 ![CI Badge](https://raw.githubusercontent.com/minhducck/key-value-data-storage/image-data/coverage.svg)
+
 ## Introduce
 
 > This is a laravel package which allows application to establish the ability to store and retrieve key-value objects.
