@@ -1,7 +1,7 @@
 # Key-Value-Data-Storage
 
 ![CI Badge](https://github.com/minhducck/key-value-data-storage/actions/workflows/package-dev.yml/badge.svg?branch=main)
-![CI Badge](https://raw.githubusercontent.com/minhducck/key-value-data-storage/image-data/coverage.svg)
+![Code Coverage](https://raw.githubusercontent.com/minhducck/key-value-data-storage/image-data/coverage.svg) [Coverage Report](https://code-coverage.duckonemorec.me/)
 
 ## Introduce
 
@@ -27,7 +27,7 @@
 ## Installation
 
 ```shell
-composer config repositories.minhducck path /home/minhducck/Projects/key-value-data-storage;
+composer composer config repositories.key-value-data-storage git git@github.com:minhducck/key-value-data-storage.git
 composer require minhducck/key-value-data-storage;
 ```
 
