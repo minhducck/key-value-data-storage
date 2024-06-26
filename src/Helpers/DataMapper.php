@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Minhducck\KeyValueDataStorage\Helpers;
@@ -9,7 +10,7 @@ use Minhducck\KeyValueDataStorage\Models\KeyValue;
 class DataMapper
 {
     /**
-     * @param array<string, mixed> $dictionary
+     * @param  array<string, mixed>  $dictionary
      * @return KeyValueDataObjectInterface[]
      */
     public static function dictionaryToKeyValueInstances(array $dictionary, int $timestamp): array
@@ -20,11 +21,12 @@ class DataMapper
             $instance->setTimestamp($timestamp);
             $instances[] = $instance;
         }
+
         return $instances;
     }
 
     /**
-     * @param KeyValue $instance
+     * @param  KeyValue  $instance
      * @return array<string, mixed>
      */
     public static function fromInstanceToDictionary(KeyValueDataObjectInterface $instance): array

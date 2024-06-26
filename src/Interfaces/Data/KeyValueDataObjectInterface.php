@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Minhducck\KeyValueDataStorage\Interfaces\Data;
 
-use Minhducck\KeyValueDataStorage\Models\KeyValue;
-
 interface KeyValueDataObjectInterface
 {
-    const KEY = 'key';
-    const VALUE = 'value';
-    const TIMESTAMP = 'timestamp';
-    const METADATA = 'metadata';
+    public const KEY = 'key';
+    public const VALUE = 'value';
+    public const TIMESTAMP = 'timestamp';
+    public const METADATA = 'metadata';
 
     /**
      * @param string $key

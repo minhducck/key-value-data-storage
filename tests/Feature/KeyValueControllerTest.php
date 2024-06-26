@@ -96,8 +96,7 @@ class KeyValueControllerTest extends TestCase
         string $key,
         mixed $expectedValue,
         null|int|string $timestamp = null
-    ): void
-    {
+    ): void {
         $url = $timestamp ? "/object/{$key}?timestamp={$timestamp}" : "/object/{$key}";
         $retrieveMyKey = $this->get($url);
         $retrieveMyKey->assertJsonIsObject();
@@ -107,9 +106,9 @@ class KeyValueControllerTest extends TestCase
     public function testFullFlowWriteReadAndRetrieveVersioned()
     {
         $timestampBaseLine = rand(10000000, 17000000);
-        $firstEventTime = Carbon::createFromTimestamp($timestampBaseLine+10000);
-        $secondEventTime = Carbon::createFromTimestamp($timestampBaseLine+20000);
-        $readEventTimeInMiddle = Carbon::createFromTimestamp($timestampBaseLine+10500);
+        $firstEventTime = Carbon::createFromTimestamp($timestampBaseLine + 10000);
+        $secondEventTime = Carbon::createFromTimestamp($timestampBaseLine + 20000);
+        $readEventTimeInMiddle = Carbon::createFromTimestamp($timestampBaseLine + 10500);
 
         // First write event
         $this->_processPostRequest(['mykey' => 'value1'], $firstEventTime);
@@ -133,7 +132,7 @@ class KeyValueControllerTest extends TestCase
 
     public function testSaveOnCorruptedPostInput()
     {
-        $this->mock(\Illuminate\Http\Request::class, function(MockInterface $mock) {
+        $this->mock(\Illuminate\Http\Request::class, function (MockInterface $mock) {
             $mock->shouldReceive('post')->andReturn('CORUPTED_DATA');
         });
         $response = $this->postJson('/object', [], ['accepts' => 'application/json']);

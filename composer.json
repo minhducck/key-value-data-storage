@@ -1,11 +1,11 @@
 {
   "name": "minhducck/key-value-data-storage",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A module that enables API to write/retrieve object based on key-value methodology.",
   "type": "library",
   "license": "MIT",
   "scripts": {
-    "check:convention": "./vendor/bin/phpstan",
+    "check:convention": "./vendor/bin/phpstan && ./vendor/bin/pint --test",
     "test": "./vendor/bin/pest",
     "test:coverage": "XDEBUG_MODE=coverage  ./vendor/bin/pest --coverage --min=65"
   },

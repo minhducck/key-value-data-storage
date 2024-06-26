@@ -7,6 +7,7 @@ namespace Minhducck\KeyValueDataStorage\Services;
 use Carbon\Carbon;
 use DateTime;
 use Minhducck\KeyValueDataStorage\Exceptions\InvalidInputException;
+use Minhducck\KeyValueDataStorage\Exceptions\KeyNotFoundException;
 use Minhducck\KeyValueDataStorage\Exceptions\UnableToSaveException;
 use Minhducck\KeyValueDataStorage\Helpers\DataMapper;
 use Minhducck\KeyValueDataStorage\Interfaces\Data\KeyValueDataObjectInterface;
@@ -17,16 +18,12 @@ use Minhducck\KeyValueDataStorage\Models\TableConstant;
 
 class KeyValueStorageService implements KeyValueStorageServiceInterface
 {
-
     /**
      * Create Datetime object from $timestamp datatype.
-     *
-     * @param int|string|null $timestamp
-     * @return DateTime
      */
     private function createQueryTime(int|string|null $timestamp): DateTime
     {
-        if (!$timestamp) {
+        if (! $timestamp) {
             return Carbon::now()->toDate();
         }
 
@@ -37,18 +34,26 @@ class KeyValueStorageService implements KeyValueStorageServiceInterface
         return Carbon::createFromTimeString($timestamp)->toDate();
     }
 
+    /**
+     * @throws KeyNotFoundException
+     */
     public function retrieve(string $key, int|string|null $timestamp = null): array
     {
-        if ($timestamp === null) {
-            $data = KeyValue::where(TableConstant::TABLE_FIELD_KEY, '=', $key)->firstOrFail();
-            return DataMapper::fromInstanceToDictionary($data);
-        }
+        try {
+            if ($timestamp === null) {
+                $data = KeyValue::where(TableConstant::TABLE_FIELD_KEY, '=', $key)->firstOrFail();
 
-        $queryDateTime = $this->createQueryTime($timestamp);
-        $foundItem     = KeyValueChangelog::where(TableConstant::TABLE_FIELD_KEY, '=', $key)
-            ->where(TableConstant::TABLE_FIELD_TIMESTAMP, '<=', $queryDateTime)
-            ->orderByDesc(TableConstant::TABLE_FIELD_TIMESTAMP)
-            ->firstOrFail();
+                return DataMapper::fromInstanceToDictionary($data);
+            }
+
+            $queryDateTime = $this->createQueryTime($timestamp);
+            $foundItem = KeyValueChangelog::where(TableConstant::TABLE_FIELD_KEY, '=', $key)
+                ->where(TableConstant::TABLE_FIELD_TIMESTAMP, '<=', $queryDateTime)
+                ->orderByDesc(TableConstant::TABLE_FIELD_TIMESTAMP)
+                ->firstOrFail();
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
+            throw new KeyNotFoundException(sprintf('There is no value for "%s" key.', $key));
+        }
 
         return DataMapper::fromInstanceToDictionary($foundItem);
     }
@@ -59,10 +64,10 @@ class KeyValueStorageService implements KeyValueStorageServiceInterface
      */
     public function save(array $dataObjects): int
     {
-        $currentTimestamp       = Carbon::now()->timestamp;
-        $keyValueModels         = DataMapper::dictionaryToKeyValueInstances($dataObjects, (int)$currentTimestamp);
+        $currentTimestamp = Carbon::now()->timestamp;
+        $keyValueModels = DataMapper::dictionaryToKeyValueInstances($dataObjects, (int) $currentTimestamp);
         $dataBaseSavableObjects = array_map(
-            fn(KeyValueDataObjectInterface $instance) => $instance->serialize(),
+            fn (KeyValueDataObjectInterface $instance) => $instance->serialize(),
             $keyValueModels
         );
 
@@ -80,16 +85,16 @@ class KeyValueStorageService implements KeyValueStorageServiceInterface
             ]
         );
 
-        if (!$result) {
+        if (! $result) {
             throw new UnableToSaveException('Unable to save key-values.');
         }
 
-        return (int)$currentTimestamp;
+        return (int) $currentTimestamp;
     }
 
     public function getAllRecords(): array
     {
-        $allKey   = KeyValue::all();
+        $allKey = KeyValue::all();
         $response = [];
 
         foreach ($allKey->getIterator() as $keyValueObject) {

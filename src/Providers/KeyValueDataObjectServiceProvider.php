@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Minhducck\KeyValueDataStorage\Providers;
 
 use Carbon\Laravel\ServiceProvider;
-use Illuminate\Support\Facades\Config;
 use Minhducck\KeyValueDataStorage\Interfaces\Data\KeyValueDataObjectInterface;
 use Minhducck\KeyValueDataStorage\Interfaces\KeyValueStorageServiceInterface;
 use Minhducck\KeyValueDataStorage\Models\KeyValue;
@@ -24,8 +23,7 @@ final class KeyValueDataObjectServiceProvider extends ServiceProvider
     ];
 
     /**
-     * @param string[] $paths
-     * @return string
+     * @param  string[]  $paths
      */
     private function resolvePath(array $paths = []): string
     {
@@ -42,9 +40,10 @@ final class KeyValueDataObjectServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom($this->resolvePath(['..', 'database', 'migrations']));
 
-        if (!env('KEY_VALUE_STORAGE.ENABLE', 0)) {
+        if (! env('KEY_VALUE_STORAGE.ENABLE', 0)) {
             $this->singletons = [];
-            $this->bindings   = [];
+            $this->bindings = [];
+
             return;
         }
 

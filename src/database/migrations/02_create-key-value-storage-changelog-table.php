@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
@@ -7,8 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Minhducck\KeyValueDataStorage\Models\TableConstant;
 
-return new class extends Migration {
-    const TABLE_NAME = TableConstant::CHANGE_LOG_TABLE_NAME;
+return new class () extends Migration {
+    public const TABLE_NAME = TableConstant::CHANGE_LOG_TABLE_NAME;
 
     /**
      * Run the migrations.

@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use Minhducck\KeyValueDataStorage\Controllers\KeyValueController;
 
-$getRoutes   = [
+$getRoutes = [
     Route::get('/object/get_all_records', [KeyValueController::class, 'getAll']),
     Route::get('/object/{key}', [KeyValueController::class, 'retrieveByKey']),
 ];

@@ -8,7 +8,6 @@ use Orchestra\Testbench\TestCase;
 
 class KeyValueControllerOnStrictEnvTest extends TestCase
 {
-
     public function createApplication()
     {
         $app = parent::createApplication();

@@ -47,7 +47,7 @@ class KeyValueStorageServiceTest extends TestCase
     {
         $timeDiffBetweenTwoSaveEvent = 50;
         $timeSave1 = $this->serviceInstance->save(['sample' => 'test']);
-        \Carbon\Carbon::setTestNow(Carbon::createFromTimestampUTC($timeSave1+$timeDiffBetweenTwoSaveEvent));
+        \Carbon\Carbon::setTestNow(Carbon::createFromTimestampUTC($timeSave1 + $timeDiffBetweenTwoSaveEvent));
         $timeSave2 = $this->serviceInstance->save(['sample' => 'test2']);
 
         $latestSampleValue = $this->serviceInstance->retrieve('sample');

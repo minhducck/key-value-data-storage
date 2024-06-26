@@ -34,7 +34,8 @@ class KeyValueTest extends TestCase
         );
     }
 
-    public function testObjectMetadata() {
+    public function testObjectMetadata()
+    {
         $keyValueObject = KeyValue::createKeyValueDataObject('sample', 0b101);
         $sampleMetadataKey = 'expirationTime';
         $expTime = 10000123;
@@ -46,7 +47,8 @@ class KeyValueTest extends TestCase
         $this->assertEquals($expTime, $keyValueObject->getMetadata($sampleMetadataKey));
     }
 
-    public function testObjectResolveDatatypeItself() {
+    public function testObjectResolveDatatypeItself()
+    {
         $keyValueObject = KeyValue::createKeyValueDataObject('sample', true);
         $this->assertEquals(DataTypeResolver::TYPE_BOOL, $keyValueObject->getDataType());
     }

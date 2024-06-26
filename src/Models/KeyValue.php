@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Minhducck\KeyValueDataStorage\Models;
@@ -15,9 +16,9 @@ use Minhducck\KeyValueDataStorage\Interfaces\Data\KeyValueDataObjectInterface;
  */
 class KeyValue extends Model implements KeyValueDataObjectInterface
 {
-    const CREATED_AT = TableConstant::TABLE_FIELD_TIMESTAMP;
+    public const CREATED_AT = TableConstant::TABLE_FIELD_TIMESTAMP;
 
-    const METADATA_DATA_TYPE = 'dataType';
+    public const METADATA_DATA_TYPE = 'dataType';
 
     protected $primaryKey = TableConstant::TABLE_FIELD_KEY;
 
@@ -42,11 +43,11 @@ class KeyValue extends Model implements KeyValueDataObjectInterface
     {
         $metadata = $this->{self::METADATA};
 
-        if (!is_array($this->{self::METADATA})) {
+        if (! is_array($this->{self::METADATA})) {
             $metadata = json_decode($this->{self::METADATA} ?? '{}', true);
         }
 
-        if (!array_key_exists(self::METADATA_DATA_TYPE, $metadata)) {
+        if (! array_key_exists(self::METADATA_DATA_TYPE, $metadata)) {
             $metadata[self::METADATA_DATA_TYPE] = DataTypeResolver::resolve($this->getValue());
         }
 
@@ -67,15 +68,17 @@ class KeyValue extends Model implements KeyValueDataObjectInterface
     public function setMetadata(string $key, mixed $value): KeyValueDataObjectInterface
     {
         $this->_populateMetadata();
-        $metadata               = $this->{self::METADATA};
-        $metadata[$key]         = $value;
+        $metadata = $this->{self::METADATA};
+        $metadata[$key] = $value;
         $this->{self::METADATA} = $metadata;
+
         return $this;
     }
 
     public function setObjectKey(string $key): KeyValueDataObjectInterface
     {
         $this->{self::KEY} = $key;
+
         return $this;
     }
 
@@ -87,6 +90,7 @@ class KeyValue extends Model implements KeyValueDataObjectInterface
     public function setValue(mixed $value): KeyValueDataObjectInterface
     {
         $this->{self::VALUE} = $value;
+
         return $this;
     }
 
@@ -98,20 +102,22 @@ class KeyValue extends Model implements KeyValueDataObjectInterface
     public function setTimestamp(int $timestamp): KeyValueDataObjectInterface
     {
         $this->{self::TIMESTAMP} = $timestamp;
+
         return $this;
     }
 
     public function getTimestamp(): int
     {
-        return (int)$this->{self::TIMESTAMP};
+        return (int) $this->{self::TIMESTAMP};
     }
 
     public static function createKeyValueDataObject(string $key, mixed $value): KeyValueDataObjectInterface
     {
         $newObject = new self();
+
         return $newObject->setObjectKey($key)
             ->setValue($value)
-            ->setTimestamp((int)Carbon::now()->timestamp);
+            ->setTimestamp((int) Carbon::now()->timestamp);
     }
 
     public function getDataType(): string
@@ -122,10 +128,10 @@ class KeyValue extends Model implements KeyValueDataObjectInterface
     public function serialize(): array
     {
         return [
-            self::METADATA  => json_encode($this->getMetadata()),
+            self::METADATA => json_encode($this->getMetadata()),
             self::TIMESTAMP => Carbon::createFromTimestampUTC($this->getTimestamp())->toDate(),
-            self::KEY       => $this->getObjectKey(),
-            self::VALUE     => DataTypeResolver::serializeValue($this->getValue()),
+            self::KEY => $this->getObjectKey(),
+            self::VALUE => DataTypeResolver::serializeValue($this->getValue()),
         ];
     }
 }

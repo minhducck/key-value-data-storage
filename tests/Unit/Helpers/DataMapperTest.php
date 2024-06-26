@@ -33,7 +33,7 @@ class DataMapperTest extends TestCase
         $this->assertEquals(array_map(fn ($instance) => $instance->getObjectKey(), $instances), array_keys($testInput));
     }
 
-    public function testFromInstanceToDictionary ()
+    public function testFromInstanceToDictionary()
     {
         $inputObjectKey = 'bool';
         $keyValueInstance = KeyValue::createKeyValueDataObject($inputObjectKey, true);
