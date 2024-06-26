@@ -18,7 +18,9 @@ class KeyValueController extends Controller
     use AuthorizesRequests;
     use ValidatesRequests;
 
-    public function __construct(private readonly KeyValueStorageServiceInterface $keyValueStorageService) {}
+    public function __construct(private readonly KeyValueStorageServiceInterface $keyValueStorageService)
+    {
+    }
 
     /**
      * Getting all latest key-value pair from database.
