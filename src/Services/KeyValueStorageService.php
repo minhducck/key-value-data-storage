@@ -6,6 +6,7 @@ namespace Minhducck\KeyValueDataStorage\Services;
 
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Support\Facades\DB;
 use Minhducck\KeyValueDataStorage\Exceptions\InvalidInputException;
 use Minhducck\KeyValueDataStorage\Exceptions\KeyNotFoundException;
 use Minhducck\KeyValueDataStorage\Exceptions\UnableToSaveException;
@@ -64,7 +65,8 @@ class KeyValueStorageService implements KeyValueStorageServiceInterface
      */
     public function save(array $dataObjects): int
     {
-        $currentTimestamp = Carbon::now()->timestamp;
+        $currentTime = Carbon::now();
+        $currentTimestamp = $currentTime->timestamp;
         $keyValueModels = DataMapper::dictionaryToKeyValueInstances($dataObjects, (int) $currentTimestamp);
         $dataBaseSavableObjects = array_map(
             fn (KeyValueDataObjectInterface $instance) => $instance->serialize(),
@@ -75,15 +77,12 @@ class KeyValueStorageService implements KeyValueStorageServiceInterface
             throw new InvalidInputException('Unable to save empty objects');
         }
 
-        $result = KeyValue::upsert(
-            $dataBaseSavableObjects,
-            uniqueBy: [KeyValueDataObjectInterface::KEY],
-            update: [
-                KeyValueDataObjectInterface::VALUE,
-                KeyValueDataObjectInterface::TIMESTAMP,
-                KeyValueDataObjectInterface::METADATA,
-            ]
-        );
+        try {
+            [$rawQueryString, $binding] = $this->prepareInsertQuery($dataBaseSavableObjects, $currentTime);
+            $result = DB::statement($rawQueryString, $binding);
+        } catch (\Illuminate\Database\QueryException $exception) {
+            throw new UnableToSaveException('Unable to save key-values.', $exception);
+        }
 
         if (! $result) {
             throw new UnableToSaveException('Unable to save key-values.');
@@ -102,5 +101,31 @@ class KeyValueStorageService implements KeyValueStorageServiceInterface
         }
 
         return $response;
+    }
+
+    /**
+     * @param  array<string, mixed>  $dataBaseSavableObjects
+     * @return array{literal-string&non-falsy-string, array<0|1|2|3, mixed>}
+     */
+    private function prepareInsertQuery(array $dataBaseSavableObjects, Carbon $currentTime): array
+    {
+        $rawQueryString = sprintf(
+            'INSERT INTO `%s` (`%s`, `%s`, `%s`, `%s`) ',
+            TableConstant::TABLE_NAME,
+            KeyValueDataObjectInterface::KEY,
+            KeyValueDataObjectInterface::VALUE,
+            KeyValueDataObjectInterface::TIMESTAMP,
+            KeyValueDataObjectInterface::METADATA,
+        );
+        $binding = [];
+        $valuesArr = [];
+
+        foreach ($dataBaseSavableObjects as $value) {
+            $valuesArr[] = '(?, ?, ?, ?)';
+            $binding = array_merge($binding, [$value['key'], $value['value'], $currentTime->format('Y-m-d H:i:s'), $value['metadata']]);
+        }
+        $rawQueryString .= ' VALUES '.implode(',', $valuesArr).' ON DUPLICATE KEY UPDATE `value` = VALUES(value), timestamp = VALUES(timestamp), metadata = VALUES(metadata)';
+
+        return [$rawQueryString, $binding];
     }
 }

@@ -3,6 +3,7 @@
 namespace Minhducck\KeyValueDataStorage\Test\Unit\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Minhducck\KeyValueDataStorage\Exceptions\InvalidInputException;
 use Minhducck\KeyValueDataStorage\Exceptions\UnableToSaveException;
 use Minhducck\KeyValueDataStorage\Providers\KeyValueDataObjectServiceProvider;
@@ -36,6 +37,7 @@ class KeyValueStorageServiceTest extends TestCase
 
     public function testSaveWithConflict()
     {
+        DB::shouldReceive('statement')->once()->andReturn(null);
         $this->expectException(UnableToSaveException::class);
         $this->expectExceptionMessage('Unable to save key-values.');
         \Carbon\Carbon::setTestNow(\Carbon\Carbon::now());
