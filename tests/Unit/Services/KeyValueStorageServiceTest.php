@@ -42,6 +42,21 @@ class KeyValueStorageServiceTest extends TestCase
         $this->expectExceptionMessage('Unable to save key-values.');
         \Carbon\Carbon::setTestNow(\Carbon\Carbon::now());
         $this->serviceInstance->save(['test' => 'conflict']);
+    }
+
+    public function testSaveWithConflictWhenDBException()
+    {
+        DB::shouldReceive('statement')->once()->andThrow(
+            new \Illuminate\Database\QueryException(
+                'default',
+                'sample',
+                [],
+                new \Exception('mock')
+            )
+        );
+        $this->expectException(UnableToSaveException::class);
+        $this->expectExceptionMessage('Unable to save key-values.');
+        \Carbon\Carbon::setTestNow(\Carbon\Carbon::now());
         $this->serviceInstance->save(['test' => 'conflict']);
     }
 
